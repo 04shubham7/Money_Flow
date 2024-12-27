@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+
+    >
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/baseline_home_24"
+            android:title="@string/menu_home"
+            />
+        <item
+            android:id="@+id/nav_Fplan"
+            android:icon="@drawable/baseline_next_plan_24"
+            android:title="Finance Planning"
+            />
+        <item
+            android:id="@+id/nav_Fexpend"
+            android:icon="@drawable/baseline_exposure_24"
+            android:title="Expenditure Updation"
+            />
+        <item
+            android:id="@+id/nav_Fremind"
+            android:icon="@drawable/baseline_edit_calendar_24"
+            android:title="Financial Reminder"
+            />
+        <item
+            android:id="@+id/nav_Fcc"
+            android:icon="@drawable/baseline_currency_exchange_24"
+            android:title="Currency Converter"
+            />
+    </group>
+</menu>

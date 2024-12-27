@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="130dp"
-        app:srcCompat="@drawable/Logo1"
+        app:srcCompat="@drawable/logo"
 
         android:elevation="20dp"
         />
