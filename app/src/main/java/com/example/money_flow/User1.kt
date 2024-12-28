@@ -5,5 +5,7 @@ data class User1(val name: String,
                  val username: String?,
                  val password: String?
 ){
-
+companion object{
+    var username:String?=null
+}
 }
