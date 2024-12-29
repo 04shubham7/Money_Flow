@@ -1,6 +1,7 @@
 package com.example.money_flow.ui.gallery
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.money_flow.User1
 
 import com.example.money_flow.databinding.FragmentPlanBinding
+import com.google.firebase.firestore.FirebaseFirestore
 
 class PlanFragment : Fragment() {
     private var _binding: FragmentPlanBinding? = null
@@ -26,6 +28,7 @@ class PlanFragment : Fragment() {
 
         binding.buttonSavePlan.setOnClickListener {
             saveFinancePlan()
+
         }
 
         return root
@@ -51,12 +54,12 @@ class PlanFragment : Fragment() {
             onSuccessListener = {
                 // Data saved successfully, update UI or navigate
                 Toast.makeText(requireContext(), "Plan saved successfully", Toast.LENGTH_SHORT).show()
-                // ...
+
             },
             onFailureListener = { exception ->
                 // Handle error, display message or retry
-                Toast.makeText(requireContext(), "Failed to save plan: ${exception.message}", Toast.LENGTH_SHORT).show()
-                // ...
+                    Log.d("exception","Error")
+
             }
         )
     }
