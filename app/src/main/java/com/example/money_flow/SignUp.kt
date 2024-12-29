@@ -12,6 +12,8 @@ import com.example.money_flow.R
 import com.example.money_flow.User1
 
 import com.example.money_flow.databinding.ActivitySignUpBinding
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -21,6 +23,7 @@ class SignUp: AppCompatActivity() {
     lateinit var database: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this)
         binding=ActivitySignUpBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -37,8 +40,17 @@ class SignUp: AppCompatActivity() {
 
             val user1= User1(name,email,username,password)
 
-            database= FirebaseDatabase.getInstance("https://moneyflow-3824f-default-rtdb.firebaseio.com/").getReference("Users")
+            database= FirebaseDatabase.getInstance().getReference("Users")
             database.child(username).setValue(user1).addOnSuccessListener {
+                // Check if the user is authenticated after registration
+                FirebaseAuth.getInstance().currentUser?.let { user ->
+                    // User is authenticated, proceed to the next screen
+                    val intent = Intent(this@SignUp, SignIn::class.java) // Or HomeActivity as needed
+                    startActivity(intent)
+                } ?: run {
+                    // If there is no authenticated user
+                    Toast.makeText(this, "Authentication failed, please try again.", Toast.LENGTH_SHORT).show()
+                }
                 binding.etmail.text?.clear()
                 binding.etname.text?.clear()
                 binding.etuname.text?.clear()
