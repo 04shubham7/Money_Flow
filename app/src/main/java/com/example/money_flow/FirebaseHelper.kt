@@ -1,6 +1,7 @@
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.example.money_flow.UserManager
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,9 +11,14 @@ object FirebaseHelper {
 
     private val db: FirebaseFirestore
         get() = FirebaseFirestore.getInstance()
-    private val currentUser = FirebaseAuth.getInstance().currentUser
+    private val currentUser = UserManager.getCurrentUUser()
 
-    fun saveFinancePlan(context: Context, totalIncome: Long, needs: Long, wants: Long, savings: Long, onSuccessListener: () -> Unit, onFailureListener: (Exception) -> Unit) {
+    fun saveFinancePlan(context: Context,
+                        totalIncome: Long,
+                        needs: Long,
+                        wants: Long,
+                        savings: Long,
+                        onSuccessListener: () -> Unit, onFailureListener: (Exception) -> Unit) {
 
 
         // Check if the user is authenticated
@@ -24,16 +30,19 @@ object FirebaseHelper {
 
         val data = hashMapOf(
             "total_income" to totalIncome,
-            "allocation" to mapOf("needs" to needs, "wants" to wants, "savings" to savings)
+            "allocation" to mapOf("needs" to needs, "wants" to wants, "savings" to savings),
+            "timestamp" to Timestamp.now()
         )
 
         Log.d("FirebaseHelper", "Saving Plan data: $data")
         db.collection("users").document(currentUser.uid).collection("plans").document("plan").set(data)
             .addOnSuccessListener {
+                Log.d("FirebaseHelper","Plan Saved Successfully: ${currentUser.uid}")
                 Toast.makeText(context, "Plan saved successfully", Toast.LENGTH_SHORT).show()
                 onSuccessListener()
             }
             .addOnFailureListener { exception ->
+                Log.e("FirebaseHelper", "Error saving plan: ${currentUser.uid}",exception)
                 Toast.makeText(context, "Failed to save plan: ${exception.message}", Toast.LENGTH_SHORT).show()
                 onFailureListener(exception)
             }

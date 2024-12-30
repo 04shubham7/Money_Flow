@@ -2,6 +2,7 @@ package com.example.SignIn
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.UserManager
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -14,13 +15,17 @@ import com.example.money_flow.HomeActivity
 import com.example.money_flow.R
 
 import com.example.money_flow.databinding.ActivitySignInBinding
+import com.google.firebase.auth.FirebaseAuth
 
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignIn : AppCompatActivity() {
-    private lateinit var binding1: ActivitySignInBinding
-    private lateinit var databaseReference:DatabaseReference
+    private lateinit var binding: ActivitySignInBinding
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
+
 
     companion object {
         const val KEY1 = "com.example.database.SigninActivity.mail"
@@ -34,6 +39,8 @@ class SignIn : AppCompatActivity() {
         val binding = ActivitySignInBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
+        firestore=FirebaseFirestore.getInstance()
+        auth=FirebaseAuth.getInstance()
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -41,10 +48,10 @@ class SignIn : AppCompatActivity() {
         }
         binding.signin.setOnClickListener {
 //            Take ref till node "Users"
-            val uname = binding.etname.text.toString()
             val pass = binding.etpass.text.toString()
-            if (uname.isNotEmpty() && pass.isNotEmpty()) {
-                readData(uname)
+            val email=binding.etmail.text.toString()
+            if (email.isNotEmpty() && pass.isNotEmpty()) {
+                readData(email,pass)
             } else {
                 Toast.makeText(this@SignIn, "Please fill all fields", Toast.LENGTH_LONG)
                     .show()
@@ -57,33 +64,31 @@ class SignIn : AppCompatActivity() {
         }
     }
 
-    private fun readData(uname: String) {
-        databaseReference = FirebaseDatabase.getInstance("https://moneyflow-3824f-default-rtdb.firebaseio.com/").getReference("Users")
-
-        databaseReference.child(uname).get().addOnSuccessListener {
-//                if user exist or not
-            if (it.exists()) {
-//                    welcome your User in your app and add intent
-                val name = it.child("name").value
-                val email = it.child("email").value
-                val username = it.child("username").value
-                val password = it.child("password").value
-                Toast.makeText(this@SignIn, "Welcome $name", Toast.LENGTH_LONG).show()
-                val intent = Intent(this@SignIn, HomeActivity::class.java)
-
-                intent.putExtra(KEY2, name.toString())
-                intent.putExtra(KEY1, email.toString())
-                intent.putExtra(KEY3, username.toString())
-                startActivity(intent)
-
-
-            } else {
-                Toast.makeText(this@SignIn, "User does not exist", Toast.LENGTH_LONG).show()
+    private fun readData(email: String,pass:String) {
+        auth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(this) { task->
+            if (task.isSuccessful) {
+                auth.currentUser?.let { user->
+                    firestore.collection("users").document(user.uid).get()
+                        .addOnSuccessListener { document->
+                            if (document!=null && document.exists()){
+                                val name=document.getString("name")
+                                val email=document.getString("email")
+                                val username=document.getString("username")
+                                com.example.money_flow.UserManager.setCurrentUser(user)
+                                Toast.makeText(this, "Welcome ${user.email}", Toast.LENGTH_LONG).show()
+                                startActivity(Intent(this,HomeActivity::class.java))
+                                finish()
+                            }else{
+                                Toast.makeText(this, "User not found", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        .addOnFailureListener { exception->
+                            Toast.makeText(this, "Error retrieving user data: ${exception.message}", Toast.LENGTH_LONG).show()
+                        }
+                }
+            }else{
+                Toast.makeText(this, "Authentication Failed:${task.exception?.message}", Toast.LENGTH_LONG).show()
             }
-
-        }.addOnFailureListener {
-            Toast.makeText(this@SignIn, "FAILED,Error in Database", Toast.LENGTH_LONG)
-                .show()
         }
     }
 }

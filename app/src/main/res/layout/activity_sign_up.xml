@@ -20,11 +20,12 @@
         android:background="@color/white"
         >
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etname"
+            android:id="@+id/names"
             android:layout_width="290dp"
             android:layout_height="55dp"
             android:layout_gravity="center"
             android:gravity="start"
+            android:inputType="textEmailAddress"
             android:hint="        Enter your email"
             android:drawableStart="@drawable/baseline_alternate_email_24"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -46,6 +47,7 @@
             android:layout_gravity="center"
             android:gravity="start"
             android:drawableStart="@drawable/baseline_person_24"
+            android:inputType="textPersonName"
             android:hint="   Enter your name" />
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -63,6 +65,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:gravity="start"
+            android:inputType="text"
             android:hint="         Enter your Username"
             android:drawableStart="@drawable/baseline_person_pin_24"
             />
@@ -84,6 +87,7 @@
             android:layout_gravity="center"
             android:gravity="start"
             android:id="@+id/etpass"
+            android:inputType="textPassword"
             android:hint="         Enter your Password"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
