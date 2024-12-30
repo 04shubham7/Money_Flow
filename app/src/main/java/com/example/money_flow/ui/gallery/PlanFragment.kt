@@ -35,7 +35,7 @@ class PlanFragment : Fragment() {
     }
 
     private fun saveFinancePlan() {
-        val username = User1.username // Assuming User1.username is accessible
+
         val totalAmount = binding.inputTotalSalary.text.toString().toLongOrNull() ?: 0 // Default to 0 if null
         val savings = binding.inputSavings.text.toString().toLongOrNull() ?: 0 // Default to 0 if null
         val needs = binding.inputNeeds.text.toString().toLongOrNull() ?: 0 // Default to 0 if null
@@ -58,7 +58,7 @@ class PlanFragment : Fragment() {
             },
             onFailureListener = { exception ->
                 // Handle error, display message or retry
-                    Log.d("exception","Error")
+                    Log.e("PlanFragment","Failed to save plan",exception)
 
             }
         )
